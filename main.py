@@ -1,7 +1,7 @@
 import pytesseract
 import PIL.Image
 import cv2
-
+from pytesseract import Output
 """
 Page segmentation modes:
 
@@ -32,9 +32,25 @@ OCR Engine Mode
 3   Default, based on what is available.
 """
 
-myconfig = r"--psm 6 --oem 3"
-logoconfig = r"--psm 11 --oem 3"
+myconfig = r"--psm 6 --oem 3" #For a basic plain text image with clear texts
+logoconfig = r"--psm 11 --oem 3" # For logos
 
 text = pytesseract.image_to_string(PIL.Image.open("logo.jpg"),config=logoconfig)
 
-print(text)
+img = cv2.imread("logo.jpg")
+height, width, _ = img.shape
+
+data = pytesseract.image_to_data(img, config=myconfig, output_type=Output.DICT)
+
+# print(text) #Prints every output
+print(data["text"]) #prints recogonised texts
+
+amount_boxes = len(data['text'])
+
+for i in range(amount_boxes):
+    if float(data['conf'][i] > 80):
+        (x,y,width,height) = (data['left'][i], data['top'][i], data['width'][i], data['height'][i])
+        img = cv2.rectangle(img, (x,y), (x+width, y+height), (0,255,0), 2)
+
+cv2.imshow("img",img)
+cv2.waitKey(0)
