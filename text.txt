@@ -1,0 +1,15 @@
+OCR Engine Mode
+
+0
+
+1
+2
+3
+
+Legacy engine only.
+
+Neural nets LSTM engine only.
+
+Legacy + LSTM engines.
+
+Default, based on what is available.
